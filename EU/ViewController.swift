@@ -41,18 +41,82 @@ class ViewController: UIViewController {
                    "Sweden",
                    "United Kingdom"]
     
+    var nations: [Nation] = []
+    var usesEuro = [true,
+                    true,
+                    false,
+                    false,
+                    true,
+                    false,
+                    false,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    false,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    false,
+                    true,
+                    false,
+                    true,
+                    true,
+                    true,
+                    false,
+                    false
+]
+    var capitals = ["Vienna",
+                    "Brussels",
+                    "Sofia",
+                    "Zagreb",
+                    "Nicosia",
+                    "Prague",
+                    "Copenhagen",
+                    "Tallinn",
+                    "Helsinki",
+                    "Paris",
+                    "Berlin",
+                    "Athens",
+                    "Budapest",
+                    "Dublin",
+                    "Rome",
+                    "Riga",
+                    "Vilnius",
+                    "Luxembourg (city)",
+                    "Valetta",
+                    "Amsterdam",
+                    "Warsaw",
+                    "Lisbon",
+                    "Bucharest",
+                    "Bratislava",
+                    "Ljubljana",
+                    "Madrid",
+                    "Stockholm",
+                    "London"]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        
+        for index in 0..<members.count {
+            let newNation = Nation(country: members[index], capital: capitals[index], usesEuro: usesEuro[index])
+            nations.append(newNation)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowDetail" {
             let destination = segue.destination as! DetailViewTableViewController
             let selectedIndexPath = tableView.indexPathForSelectedRow!
-            destination.member = members[selectedIndexPath.row]
+            destination.nation = nations[selectedIndexPath.row]
         } else {
             if let selectedIndexPath = tableView.indexPathForSelectedRow {
                 tableView.deselectRow(at: selectedIndexPath, animated: true)
@@ -63,11 +127,11 @@ class ViewController: UIViewController {
     @IBAction func unwindFromDetail(segue: UIStoryboardSegue) {
         let source = segue.source as! DetailViewTableViewController
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
-            members[selectedIndexPath.row] = source.member
+            nations[selectedIndexPath.row] = source.nation
             tableView.reloadRows(at: [selectedIndexPath], with: .automatic)
         } else {
             let newIndexPath = IndexPath(row: members.count, section: 0)
-            members.append(source.member)
+            nations.append(source.nation)
             tableView.insertRows(at: [newIndexPath], with: .bottom)
             tableView.scrollToRow(at: newIndexPath, at: .bottom, animated: true)
         }
@@ -98,7 +162,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = members[indexPath.row]
+        cell.textLabel?.text = nations[indexPath.row].country
+        cell.detailTextLabel?.text = nations[indexPath.row].country
+        cell.detailTextLabel?.text = "Capital: \(nations[indexPath.row].capital)"
         return cell
     }
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -109,9 +175,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let itemToMove = members[sourceIndexPath.row]
-        members.remove(at: sourceIndexPath.row)
-        members.insert(itemToMove, at: destinationIndexPath.row)
+        let itemToMove = nations[sourceIndexPath.row]
+        nations.remove(at: sourceIndexPath.row)
+        nations.insert(itemToMove, at: destinationIndexPath.row)
     }
+    
     
 }
