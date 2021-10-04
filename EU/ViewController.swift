@@ -187,16 +187,22 @@ class ViewController: UIViewController {
     
 }
 
-extension ViewController: UITableViewDelegate, UITableViewDataSource {
+extension ViewController: UITableViewDelegate, UITableViewDataSource, ListTableViewCellDelegate {
+    func euroButtonToggled(sender: ListTableViewCell) {
+        if let selectedIndexPath = tableView.indexPath(for: sender) {
+            nations[selectedIndexPath.row].usesEuro = !nations[selectedIndexPath.row].usesEuro
+            tableView.reloadRows(at: [selectedIndexPath], with: .automatic)
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return members.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = nations[indexPath.row].country
-        cell.detailTextLabel?.text = nations[indexPath.row].country
-        cell.detailTextLabel?.text = "Capital: \(nations[indexPath.row].capital)"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ListTableViewCell
+        cell.delegate = self
+        cell.nation = nations[indexPath.row]
         return cell
     }
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -213,6 +219,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         nations.insert(itemToMove, at: destinationIndexPath.row)
         
         saveData()
+        
+        
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
     
